@@ -40,6 +40,7 @@ Both `<org>` and `<repo>` may optionally be formatted as `<org/repo>`.
 #### Options
 
 - `-d` `--destructive` - When enabled, allows `standardize` to remove labels not found in the config file.
+- `-s` `--skip_forks` - When enabled, instructs `org-labels` to skip GitHub forks.
 
 ## Examples
 
