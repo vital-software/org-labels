@@ -142,7 +142,7 @@ function* standardize(args) {
     org = org_and_repo[0]
   } else {
     // if no single repo is specified, do all the repos! \o/
-    var repos = yield* this.get_repos(org)
+    var repos = yield* this.get_repos(org, this.opts)
   }
 
   console.log('checking %d labels across %d repos', config.length, repos.length)
@@ -253,7 +253,7 @@ function compare_labels(config, _existing, destructive) {
  *
  * returns a list of repos
  */
-function* get_repos(org) {
+function* get_repos(org, opts) {
   var repos = []
   var page  = 0
   var last_length = 0
@@ -272,8 +272,8 @@ function* get_repos(org) {
     var i = res.length
     while (i--) {
       // build list of repos, skipping forks
-      if this.opts.skip_forks {
-        if res[i].fork {
+      if (opts.skip_forks) {
+        if (res[i].fork) {
           continue
         }
       }
@@ -300,7 +300,7 @@ function* get_repos(org) {
  * returns an array of responses
  */
 function* handle_label(org, method, opts, done) {
-  var repos   = yield* this.get_repos(org)
+  var repos   = yield* this.get_repos(org, opts)
   var results = yield* this.send_label(org, repos, opts, method)
 
   var i = results.length
