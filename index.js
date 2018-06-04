@@ -271,6 +271,13 @@ function* get_repos(org) {
 
     var i = res.length
     while (i--) {
+      // build list of repos, skipping forks
+      if this.opts.skip_forks {
+        if res[i].fork {
+          continue
+        }
+      }
+
       repos.push(res[i].name)
     }
 

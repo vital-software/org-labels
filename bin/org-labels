@@ -20,6 +20,7 @@ program
   .version(version)
   .usage('<command>')
   .option('-d, --destructive', 'allow standardize to remove labels that are not found in the config file')
+  .option('-s, --skip_forks', 'skip forks')
 
 program
   .command('add <org> <label> <color>')
