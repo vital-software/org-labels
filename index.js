@@ -193,6 +193,10 @@ function* handle_repo_labels(org, repo, config, destructive) {
       , json   : item
       , auth   : this.auth
       , resolveWithFullResponse: true
+    }).catch(function (err) {
+      if (err.response.statusCode === 422) {
+        false
+      }
     }))
   }
 
@@ -261,7 +265,7 @@ function* get_repos(org, opts) {
   // handle github pagination for orgs with many repos
   while (++page) {
     var res = yield request({
-        uri    : 'https://api.github.com/users/' + org + '/repos?page=' + page
+        uri    : 'https://api.github.com/orgs/' + org + '/repos?page=' + page
       , headers: header
       , auth   : this.auth
       , json   : true
@@ -336,6 +340,12 @@ function* send_label(org, repos, opts, method) {
       , json   : opts
       , auth   : this.auth
       , resolveWithFullResponse: true
+    }).catch(function (err) {
+      if (err.response.statusCode === 422) {
+        false
+      } else if (err.response.statusCode === 404) {
+        false
+      }
     }))
   }
 
@@ -360,6 +370,10 @@ function log_results(results) {
     while (j--) {
       var result = sub[j]
 
+      if (!result || !('statusCode' in result)) {
+        continue
+      }
+
       // increment counter on successful request (2XX code)
       if (('' + result.statusCode)[0] === "2") {
         updates++
@@ -383,6 +397,10 @@ function log_result(result, label) {
   if (!label) {
     var path = result.request.path
     label = path.slice(path.lastIndexOf('/') + 1)
+  }
+
+  if (!result || !('statusCode' in result)) {
+    return false
   }
 
   if (result.statusCode === 422)
